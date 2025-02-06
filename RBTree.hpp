@@ -19,7 +19,7 @@ namespace my {
 
     template <typename T>
     inline void rbtree<T>::drop(const bool destructing) noexcept {
-        auto recv = [&](node_type* ptr) {
+        const auto recv = [&](pointer ptr) {
             if (ptr->left)
                 recv(ptr->left);
             if (ptr->right)
@@ -33,22 +33,65 @@ namespace my {
     }
 
     template <typename T>
+    void rbtree<T>::left_rotate(node* ptr) noexcept {
+
+    }
+
+    template <typename T>
+    void rbtree<T>::right_rotate(node* ptr) noexcept {
+
+    }
+
+    template <typename T>
     rbtree<T>::const_reference rbtree<T>::insert(value_type value) noexcept {
         if (!m_root) {
-            m_root = new node_type{ .val = std::move(value) };
+            m_root = new node_type{ .val = std::move(value), .colour = colour::black };
         }
         else {
             auto* current = m_root;
 
             while (current && current->value != value) {
-                
+                if (value < current->value) {
+                    if (!current->left) {
+                        current->left = new node_type{ .value = std::move(value) };
+                        break;
+                    }
+                    else {
+                        current = current->left;
+                    }
+                }
+                else {
+                    if (!current->right) {
+                        current->right = new node_type{ .value = value };
+                        break;
+                    }
+                    else {
+                        current = current->right;
+                    }
+                }
             }
         }
     }
 
     template <typename T>
-    rbtree<T>::reference rbtree<T>::search(const value_type& value) noexcept {
+    rbtree<T>::const_pointer rbtree<T>::search(const value_type& value) const noexcept {
+        // DFS 
+        const auto recv = [&](const_pointer ptr) -> const_pointer {
+            if (ptr->value == value) {
+                return ptr;
+            }
+            else { 
+                if (ptr->left)
+                    return recv(ptr->left);
+                if (ptr->right)
+                    return recv(ptr->right);
+            }
 
+            return nullptr;
+        };
+
+
+        return recv(m_root);
     }
 
     template <typename T>

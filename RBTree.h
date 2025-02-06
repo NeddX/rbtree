@@ -11,12 +11,12 @@ namespace sdx {
     private:
         struct node {
             value_type value;
-            enum colour {
+            enum colour : std::uint8_t {
                 red,
                 black
-            } colour;
-            node* left;
-            node* right;
+            } colour = colour::red;
+            node* left = nullptr;
+            node* right = nullptr;
         };
 
     private:
@@ -26,6 +26,7 @@ namespace sdx {
         using const_reference = const value_type&;
         using node_type = node;
         using pointer = node_type*;
+        using const_pointer = const node_type*;
 
     private:
         node* m_root;
@@ -39,11 +40,15 @@ namespace sdx {
     private:
         inline void drop(const bool destructing = false) noexcept;
 
+    private:
+        void left_rotate(node* ptr) noexcept;
+        void right_rotate(node* ptr) noexcept;
+
     public:
         // TODO: rvalue ref ver
         // TODO: ret iter
         const_reference insert(value_type value) noexcept;
-        reference search(const value_type& value) noexcept;
+        const_pointer search(const value_type& value) const noexcept;
         void erase() noexcept;
     };
 } // namespace my

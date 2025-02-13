@@ -33,27 +33,45 @@ namespace my {
     }
 
     template <typename T>
-    void rbtree<T>::left_rotate(node* ptr) noexcept {
+    void rbtree<T>::left_rotate(node* node) noexcept {
+        node* grandparent = node->parent;
 
+        if (grandparent->)
     }
 
     template <typename T>
-    void rbtree<T>::right_rotate(node* ptr) noexcept {
-
+    void rbtree<T>::right_rotate(node* node) noexcept {
+        node* grandparent = node->parent;
     }
 
     template <typename T>
-    void rbtree<T>::fixup(node* parent) noexcept {
-        node* grandparent = parent->parent;
+    void rbtree<T>::fixup(node* node) noexcept {
+        node* parent = node->parent;
+        node* grandparent = (parent) ? parent->parent : nullptr;
         node* uncle = (grandparent) ? ((grandparent->left == parent) ? grandparent->right : grandparent->left) : nullptr;
 
-        // Case 0: Uncle and Parent are red, recolour to black and grandparent to red.
-        if (uncle && uncle->colour == colour::red) {
+        // Case 0: Node is root, recolour to black.
+        if (node == m_root) {
+            node->colour = colour::black;
+        }
+        // Case 1: Uncle and Parent are red, recolour to black and grandparent to red.
+        else if (uncle && uncle->colour == colour::red && parent->colour == colour::red) {
             parent->colour = colour::black;
             uncle->colour = colour::black;
             grandparent->color = color::red;
 
-            fixup(grandparent)
+            fixup(grandparent);
+        }
+        // Case 2: Uncle is black or null, rotation is needed.
+        else if (!uncle || uncle->colour == colour::black) {
+            // Right rotate
+            if (parent->left == node) {
+                right_rotate(parent);
+            }
+            // Left rotate
+            else {
+                left_rotate(parent);
+            }
         }
     }
 
@@ -63,13 +81,15 @@ namespace my {
             m_root = new node_type{ .value = std::move(value), .colour = colour::black };
         }
         else {
-            auto* current = m_root;
+            node* current = m_root;
+            node* new_node = nullptr;
 
             while (current && current->value != value) {
                 if (value < current->value) {
                     if (!current->left) {
                         current->left = new node_type{ .value = std::move(value) };
                         current->left->parent = current;
+                        new_node = current->left;
                         break;
                     }
                     else {
@@ -80,6 +100,7 @@ namespace my {
                     if (!current->right) {
                         current->right = new node_type{ .value = value };
                         current->right->parent = current;
+                        new_node = current->right;
                         break;
                     }
                     else {
@@ -88,7 +109,7 @@ namespace my {
                 }
             }
 
-            fixup(current);
+            fixup(new_node);
         }
     }
 

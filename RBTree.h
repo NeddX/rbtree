@@ -42,9 +42,13 @@ namespace sdx {
         inline void drop(const bool destructing = false) noexcept;
 
     private:
-        void left_rotate(node* ptr) noexcept;
-        void right_rotate(node* ptr) noexcept;
-        void fixup(node* ptr) noexcept;
+        void left_rotate(node* node) noexcept;
+        void right_rotate(node* node) noexcept;
+
+        /**
+         * @brief Fixes recursively
+         * */
+        void fixup(node* node) noexcept;
 
     public:
         // TODO: rvalue ref ver

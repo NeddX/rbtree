@@ -43,9 +43,24 @@ namespace my {
     }
 
     template <typename T>
+    void rbtree<T>::fixup(node* parent) noexcept {
+        node* grandparent = parent->parent;
+        node* uncle = (grandparent) ? ((grandparent->left == parent) ? grandparent->right : grandparent->left) : nullptr;
+
+        // Case 0: Uncle and Parent are red, recolour to black and grandparent to red.
+        if (uncle && uncle->colour == colour::red) {
+            parent->colour = colour::black;
+            uncle->colour = colour::black;
+            grandparent->color = color::red;
+
+            fixup(grandparent)
+        }
+    }
+
+    template <typename T>
     rbtree<T>::const_reference rbtree<T>::insert(value_type value) noexcept {
         if (!m_root) {
-            m_root = new node_type{ .val = std::move(value), .colour = colour::black };
+            m_root = new node_type{ .value = std::move(value), .colour = colour::black };
         }
         else {
             auto* current = m_root;
@@ -54,6 +69,7 @@ namespace my {
                 if (value < current->value) {
                     if (!current->left) {
                         current->left = new node_type{ .value = std::move(value) };
+                        current->left->parent = current;
                         break;
                     }
                     else {
@@ -63,6 +79,7 @@ namespace my {
                 else {
                     if (!current->right) {
                         current->right = new node_type{ .value = value };
+                        current->right->parent = current;
                         break;
                     }
                     else {
@@ -70,6 +87,8 @@ namespace my {
                     }
                 }
             }
+
+            fixup(current);
         }
     }
 

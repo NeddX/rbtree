@@ -17,6 +17,7 @@ namespace sdx {
             } colour = colour::red;
             node* left = nullptr;
             node* right = nullptr;
+            node* parent = nullptr;
         };
 
     private:
@@ -43,6 +44,7 @@ namespace sdx {
     private:
         void left_rotate(node* ptr) noexcept;
         void right_rotate(node* ptr) noexcept;
+        void fixup(node* ptr) noexcept;
 
     public:
         // TODO: rvalue ref ver

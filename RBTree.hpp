@@ -6,6 +6,7 @@ namespace my {
 
     }
 
+    template <typename T>
     rbtree<T>::rbtree(const std::initializer_list<T> list) noexcept {
         for (const auto& e : list) 
             insert(e);
@@ -64,13 +65,23 @@ namespace my {
         }
         // Case 2: Uncle is black or null, rotation is needed.
         else if (!uncle || uncle->colour == colour::black) {
-            // Right rotate
-            if (parent->left == node) {
-                right_rotate(parent);
+            // Case 2.1: Left-Left, N is left child of P and P is left child of G -> right_rotate(G)
+            if (parent->left == node && grandparent->left == parent) {
+                right_rotate(grandparent);
             }
-            // Left rotate
-            else {
+            // Case 2.2: Right-Right, N is right child of P and P is right child of G -> left_rotate(G)
+            else if (parent->right == node && grandparent->right == parent) {
+                left_rotate(grandparent);
+            }
+            // Case 2.3: Left-Right, N is right child of P, but P is left child of G -> left_rotate(P), right_rotate(G)
+            else if (parent->right == node && grandparent->left == parent) {
                 left_rotate(parent);
+                right_rotate(grandparent);
+            }
+            // Case 2.4: Right-Left, N is left child of P, but P is right child of G -> right_rotate(P), left_rotate(G)
+            else if (parent->left == node && grandparent->right == parent) {
+                right_rotate(parent);
+                left_rotate(grandparent);
             }
         }
     }

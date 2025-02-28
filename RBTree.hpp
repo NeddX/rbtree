@@ -34,22 +34,59 @@ namespace my {
     }
 
     template <typename T>
-    void rbtree<T>::left_rotate(node* node) noexcept {
-        node* grandparent = node->parent;
+    void rbtree<T>::left_rotate(pointer node) noexcept {
+        pointer parent = node->parent;
 
-        if (grandparent->)
+        if (parent) {
+            if (parent->right == node) {
+                parent->right = node->right;
+            }
+            else {
+                parent->left = node->right;
+            }
+
+            pointer np_left = node->right->left;
+            node->right->left = node;
+            node->right = np_left;
+        }
+        else {
+            root = node->right;
+            pointer root_left = root->left;
+            root->left = node;
+            node->right = root_left;
+        }
     }
 
     template <typename T>
-    void rbtree<T>::right_rotate(node* node) noexcept {
-        node* grandparent = node->parent;
+    void rbtree<T>::right_rotate(pointer node) noexcept {
+        parent parent = node->parent;
+
+        if (parent) {
+            if (parent->right == node) {
+                parent->right = node->left;
+            }
+            else {
+                parent->left = node->left;
+            }
+
+            pointer np_right = node->left->right;
+            node->left->right = node;
+            node->left = np_right;
+        }
+        else {
+            root = node->left;
+            pointer root_right = root->right;
+            root->right = node;
+            node->left = root_right;
+        }
+
     }
 
     template <typename T>
-    void rbtree<T>::fixup(node* node) noexcept {
-        node* parent = node->parent;
-        node* grandparent = (parent) ? parent->parent : nullptr;
-        node* uncle = (grandparent) ? ((grandparent->left == parent) ? grandparent->right : grandparent->left) : nullptr;
+    void rbtree<T>::fixup(pointer node) noexcept {
+        pointer parent = node->parent;
+        pointer grandparent = (parent) ? parent->parent : nullptr;
+        pointer uncle = (grandparent) ? ((grandparent->left == parent) ? grandparent->right : grandparent->left) : nullptr;
 
         // Case 0: Node is root, recolour to black.
         if (node == m_root) {
@@ -92,8 +129,8 @@ namespace my {
             m_root = new node_type{ .value = std::move(value), .colour = colour::black };
         }
         else {
-            node* current = m_root;
-            node* new_node = nullptr;
+            pointer current = m_root;
+            pointer new_node = nullptr;
 
             while (current && current->value != value) {
                 if (value < current->value) {

@@ -15,9 +15,9 @@ namespace sdx {
                 red,
                 black
             } colour = colour::red;
-            node* left = nullptr;
-            node* right = nullptr;
-            node* parent = nullptr;
+            pointer left = nullptr;
+            pointer right = nullptr;
+            pointer parent = nullptr;
         };
 
     private:
@@ -30,7 +30,7 @@ namespace sdx {
         using const_pointer = const node_type*;
 
     private:
-        node* m_root;
+        pointer m_root;
 
     private:
         rbtree() noexcept;
@@ -42,13 +42,13 @@ namespace sdx {
         inline void drop(const bool destructing = false) noexcept;
 
     private:
-        void left_rotate(node* node) noexcept;
-        void right_rotate(node* node) noexcept;
+        void left_rotate(pointer node) noexcept;
+        void right_rotate(pointer node) noexcept;
 
         /**
          * @brief Fixes recursively
          * */
-        void fixup(node* node) noexcept;
+        void fixup(pointer node) noexcept;
 
     public:
         // TODO: rvalue ref ver
